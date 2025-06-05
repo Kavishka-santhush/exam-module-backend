@@ -7,9 +7,10 @@ import java.util.List;
 
 @Service
 public interface SubjectService {
+
     Subject createSubject(Subject subject);
     Subject updateSubject(Long id,Subject subject);
-    void deleteSubject(Long id);
+    boolean deleteSubject(Long id);
     List<Subject> getAllSubjects();
     Subject getSubjectById(Long id);
 }

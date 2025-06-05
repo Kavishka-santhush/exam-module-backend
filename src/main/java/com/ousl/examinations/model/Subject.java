@@ -3,8 +3,14 @@ package com.ousl.examinations.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Subject {
 
     @Id
@@ -16,31 +22,8 @@ public class Subject {
     private String name;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "program_id")
+    @JoinColumn(name = "program_id", referencedColumnName = "id")
     private Program program;
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Program getProgram() {
-        return program;
-    }
-
-    public void setProgram(Program program) {
-        this.program = program;
-    }
 }

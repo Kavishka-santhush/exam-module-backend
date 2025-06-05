@@ -33,9 +33,10 @@ public class ProgramServiceImpl implements ProgramService {
     }
 
     @Override
-    public void deleteProgram(Long id) {
+    public boolean deleteProgram(Long id) {
         Program currentProgram=programRepository.getReferenceById(id);
         programRepository.delete(currentProgram);
+        return false;
     }
 
     @Override
