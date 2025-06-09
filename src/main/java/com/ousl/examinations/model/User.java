@@ -15,7 +15,7 @@ import java.util.Set;
 @Entity
 @Table(name = "users") // Avoid using reserved keywords
 public class User {
-
+    //implement the model attributes
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -114,3 +114,4 @@ public class User {
         this.roles = roles;
     }
 }
+
