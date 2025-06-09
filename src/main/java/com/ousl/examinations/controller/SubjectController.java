@@ -5,6 +5,7 @@ import com.ousl.examinations.model.Subject;
 import com.ousl.examinations.service.Impl.SubjectServiceImpl;
 
 import com.ousl.examinations.service.Impl.SubjectServiceImpl;
+import jakarta.transaction.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @RequestMapping("/api/v1/subject")
 @RestController
 @CrossOrigin(maxAge = 3600,origins = "*")
+
 public class SubjectController {
 
     @Autowired
