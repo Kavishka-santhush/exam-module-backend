@@ -1,6 +1,6 @@
 package com.ousl.examinations.controller;
 
-import com.ousl.examinations.model.User;
+//import com.ousl.examinations.model.User;
 import com.ousl.examinations.payload.request.LoginRequest;
 import com.ousl.examinations.service.AuthService;
 import org.springframework.http.ResponseEntity;
