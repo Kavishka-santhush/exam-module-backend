@@ -2,13 +2,14 @@ package com.ousl.examinations.controller;
 
 import com.ousl.examinations.model.Location;
 import com.ousl.examinations.service.LocationService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
         import java.util.List;
 @CrossOrigin(maxAge = 3360,origins= "http://localhost:4200")
 @RestController
-@RequestMapping("/api/v1/locations")
+@RequestMapping("/api/v1/location")
 public class LocationController {
 
     private final LocationService locationService;
@@ -37,4 +38,5 @@ public class LocationController {
         locationService.deleteLocation(id);
         return ResponseEntity.noContent().build();
     }
+
 }
