@@ -12,6 +12,5 @@ import java.util.Optional;
 public interface ExamTypeRepository extends JpaRepository<ExamType, Long> {
     List<ExamType> findByStatusTrue();
     List<ExamType> findByProgramAndStatusTrue(Program program);
-    Optional<ExamType> findByExamTypeCode(String examTypeCode);
     boolean existsByExamTypeCode(String examTypeCode);
 }

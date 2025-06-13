@@ -5,6 +5,7 @@ import com.ousl.examinations.model.Subject;
 import com.ousl.examinations.repository.ProgramRepository;
 import com.ousl.examinations.repository.SubjectRepository;
 import com.ousl.examinations.service.SubjectService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,6 +79,14 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public Subject getSubjectById(Long id) {
-        return subjectRepository.findById(id).orElse(null);
+        return subjectRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Subject not found with id: " + id));
+    }
+
+    @Override
+    public List<Subject> getSubjectsByProgramId(Long programId) {
+        Program program = programRepository.findById(programId)
+                .orElseThrow(() -> new EntityNotFoundException("Program not found with id: " + programId));
+        return subjectRepository.findByProgram(program);
     }
 }

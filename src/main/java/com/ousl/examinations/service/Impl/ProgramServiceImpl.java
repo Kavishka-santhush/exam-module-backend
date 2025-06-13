@@ -26,14 +26,12 @@ public class ProgramServiceImpl implements ProgramService {
 
         Program program = new Program();
         program.setProgramName(programRequest.getProgramName());
-        program.setProgramCode(programRequest.getProgramCode());
-        
+        program.setProgramCode(programRequest.getProgramCode()); // This line must be present
         if (programRequest.getStatus() != null) {
             program.setStatus(programRequest.getStatus());
         }
 
         Program savedProgram = programRepository.save(program);
-        
         return mapProgramToResponse(savedProgram);
     }
 

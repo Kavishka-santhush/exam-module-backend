@@ -25,5 +25,4 @@ public class Subject {
     @JoinColumn(name = "program_id", referencedColumnName = "id")
     private Program program;
 
-
 }

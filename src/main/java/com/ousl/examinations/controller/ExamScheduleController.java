@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*") // Allow frontend connection
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/schedule")
 public class ExamScheduleController {

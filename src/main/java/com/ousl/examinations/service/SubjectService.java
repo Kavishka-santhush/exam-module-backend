@@ -13,5 +13,6 @@ public interface SubjectService {
     boolean deleteSubject(Long id);
     List<Subject> getAllSubjects();
     Subject getSubjectById(Long id);
+    List<Subject> getSubjectsByProgramId(Long programId);
 }
 
