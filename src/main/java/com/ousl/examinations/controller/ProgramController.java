@@ -21,7 +21,7 @@ public class ProgramController {
     private ProgramService programService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProgramResponse> createProgram(@Valid @RequestBody ProgramRequest programRequest) {
         ProgramResponse newProgram = programService.createProgram(programRequest);
         return new ResponseEntity<>(newProgram, HttpStatus.CREATED);

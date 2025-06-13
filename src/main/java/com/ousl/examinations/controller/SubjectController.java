@@ -6,12 +6,14 @@ import com.ousl.examinations.service.Impl.SubjectServiceImpl;
 
 import com.ousl.examinations.service.Impl.SubjectServiceImpl;
 import jakarta.transaction.Transactional;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-@RequestMapping("/api/v1/subject")
+@RequestMapping("/api/subject")
 @RestController
 @CrossOrigin(maxAge = 3600,origins = "*")
 
@@ -26,24 +28,15 @@ public class SubjectController {
 
     }
 
-
-    @GetMapping("/getAllSubjects")
-    public List<Subject> getAllSubjects() {
-        return subjectService.getAllSubjects();
-    }
-
-
     @GetMapping("getSubjectById/{id}")
     public Subject getSubjectById(@PathVariable Long id) {
         return subjectService.getSubjectById(id);
     }
 
-
     @PutMapping("updateSubject/{id}")
     public Subject updateSubject(@PathVariable Long id, @RequestBody Subject subject) {
         return subjectService.updateSubject(id, subject);
     }
-
 
     @DeleteMapping("/deleteSubject/{id}")
     public boolean deleteSubject(@PathVariable Long id) {
@@ -52,6 +45,16 @@ public class SubjectController {
         return subjectService.deleteSubject(id);
     }
 
-
+    @GetMapping
+    public ResponseEntity<List<Subject>> getAllSubjects() {
+        List<Subject> subjects = subjectService.getAllSubjects();
+        return ResponseEntity.ok(subjects);
+    }
+    @GetMapping("/byProgram/{programId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Subject>> getSubjectsByProgramId(@PathVariable Long programId) {
+        List<Subject> subjects = subjectService.getSubjectsByProgramId(programId);
+        return ResponseEntity.ok(subjects);
+    }
 }
 

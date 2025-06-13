@@ -1,4 +1,4 @@
-package com.ousl.examinations.payload.request;//package com.ousl.examinations.payload.request;
+package com.ousl.examinations.payload.request;
 
 public class LocationRequest {
 

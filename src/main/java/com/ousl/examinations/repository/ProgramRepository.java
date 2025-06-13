@@ -10,6 +10,5 @@ import java.util.Optional;
 @Repository
 public interface ProgramRepository extends JpaRepository<Program, Long> {
     List<Program> findByStatusTrue();
-    Optional<Program> findByProgramCode(String programCode);
     boolean existsByProgramCode(String programCode);
 }

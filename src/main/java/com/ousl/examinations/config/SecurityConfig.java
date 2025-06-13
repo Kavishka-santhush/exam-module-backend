@@ -47,8 +47,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/v1/auth/**",
                                 "/login",
-                                "/register",
-                                "api/locations"
+                                "/register"
                         ).permitAll()
                         .anyRequest().authenticated()).
                 httpBasic(Customizer.withDefaults()).
