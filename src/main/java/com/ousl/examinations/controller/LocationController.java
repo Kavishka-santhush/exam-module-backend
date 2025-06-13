@@ -3,9 +3,10 @@ package com.ousl.examinations.controller;
 import com.ousl.examinations.model.Location;
 import com.ousl.examinations.service.LocationService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-        import java.util.List;
+import java.util.List;
 @CrossOrigin(maxAge = 3360,origins= "http://localhost:4200")
 @RestController
 @RequestMapping("/api/locations")
@@ -18,8 +19,10 @@ public class LocationController {
     }
 
     @GetMapping
-    public List<Location> getAllLocations() {
-        return locationService.getAllLocations();
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Location>> getAllLocations() {
+        List<Location> locations = locationService.getAllLocations();
+        return ResponseEntity.ok(locations);
     }
 
     @PostMapping
