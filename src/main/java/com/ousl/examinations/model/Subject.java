@@ -25,4 +25,19 @@ public class Subject {
     @JoinColumn(name = "program_id", referencedColumnName = "id")
     private Program program;
 
+    public String getName() {
+        return name;
+    }
+
+    public Program getProgram() {
+        return program;
+    }
+
+    public void setProgram(Program program) {
+        this.program = program;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

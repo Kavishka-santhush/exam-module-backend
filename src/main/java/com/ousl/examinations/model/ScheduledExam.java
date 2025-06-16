@@ -27,5 +27,33 @@ public class ScheduledExam {
 
     private String structure;
     private String location;
+
+    public String getProgram() {
+        return program;
+    }
+
+    public String getBatch() {
+        return batch;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public LocalTime getTime() {
+        return time;
+    }
+
+    public String getStructure() {
+        return structure;
+    }
+
+    public String getLocation() {
+        return location;
+    }
 }
 
