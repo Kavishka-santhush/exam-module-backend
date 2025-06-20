@@ -1,6 +1,7 @@
 package com.ousl.examinations.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "sc_exam_prog_marks_critera")
@@ -14,12 +15,16 @@ public class ScExamProgMarksCriteria {
     @JoinColumn(name = "progid", nullable = false)
     private Program program;
 
-    @Column(name = "marks", nullable = false)
-    private int marks;
-
     @ManyToOne
     @JoinColumn(name = "criteria_id", nullable = false)
     private FinalExamCriteria finalExamCriteria;
+    
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+    
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     // Getters and Setters
 
@@ -39,13 +44,7 @@ public class ScExamProgMarksCriteria {
         this.program = program;
     }
 
-    public int getMarks() {
-        return marks;
-    }
 
-    public void setMarks(int marks) {
-        this.marks = marks;
-    }
 
     public FinalExamCriteria getFinalExamCriteria() {
         return finalExamCriteria;
@@ -53,5 +52,21 @@ public class ScExamProgMarksCriteria {
 
     public void setFinalExamCriteria(FinalExamCriteria finalExamCriteria) {
         this.finalExamCriteria = finalExamCriteria;
+    }
+    
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

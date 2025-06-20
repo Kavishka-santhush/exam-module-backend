@@ -4,13 +4,18 @@ import com.ousl.examinations.dto.MarksCriteriaDTO;
 import com.ousl.examinations.model.Component;
 import com.ousl.examinations.model.MarksCriteria;
 import com.ousl.examinations.model.Program;
+import com.ousl.examinations.model.User;
 import com.ousl.examinations.repository.ComponentRepository;
 import com.ousl.examinations.repository.MarksCriteriaRepository;
 import com.ousl.examinations.repository.ProgramRepository;
+import com.ousl.examinations.repository.UserRepository;
 import com.ousl.examinations.service.MarksCriteriaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +30,9 @@ public class MarksCriteriaServiceImpl implements MarksCriteriaService {
 
     @Autowired
     private ProgramRepository programRepository;
+    
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public List<Component> getAllComponents() {
@@ -38,6 +46,9 @@ public class MarksCriteriaServiceImpl implements MarksCriteriaService {
 
     @Override
     public void saveMarksCriteria(List<MarksCriteriaDTO> marksCriteriaDTOList) {
+        // Get current user from security context
+        User currentUser = getCurrentUser();
+        
         for (MarksCriteriaDTO dto : marksCriteriaDTOList) {
             MarksCriteria criteria = (dto.getId() != null)
                     ? marksCriteriaRepository.findById(dto.getId()).orElse(new MarksCriteria())
@@ -51,6 +62,8 @@ public class MarksCriteriaServiceImpl implements MarksCriteriaService {
                     .orElseGet(() -> {
                         Component newComponent = new Component();
                         newComponent.setComponentName(dto.getComponentName());
+                        newComponent.setUser(currentUser);
+                        newComponent.setCreatedAt(LocalDateTime.now());
                         return componentRepository.save(newComponent);
                     });
 
@@ -58,6 +71,13 @@ public class MarksCriteriaServiceImpl implements MarksCriteriaService {
             criteria.setComponent(component);
             criteria.setMinMark(dto.getMinMark());
             criteria.setPercentage(dto.getPercentage());
+            
+            // Set user and created_at for new records
+            if (criteria.getId() == null) {
+                criteria.setUser(currentUser);
+                criteria.setCreatedAt(LocalDateTime.now());
+            }
+            
             marksCriteriaRepository.save(criteria);
         }
     }
@@ -66,7 +86,22 @@ public class MarksCriteriaServiceImpl implements MarksCriteriaService {
     public Component addNewComponent(String componentName) {
         Component component = new Component();
         component.setComponentName(componentName);
+        
+        // Set user and created_at
+        User currentUser = getCurrentUser();
+        component.setUser(currentUser);
+        component.setCreatedAt(LocalDateTime.now());
+        
         return componentRepository.save(component);
+    }
+    
+    private User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            String username = authentication.getName();
+            return userRepository.findByUsername(username);
+        }
+        return null;
     }
 
     private MarksCriteriaDTO convertToDTO(MarksCriteria marksCriteria) {

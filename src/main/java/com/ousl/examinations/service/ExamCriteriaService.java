@@ -3,15 +3,20 @@ package com.ousl.examinations.service;
 import com.ousl.examinations.model.FinalExamCriteria;
 import com.ousl.examinations.model.Program;
 import com.ousl.examinations.model.ScExamProgMarksCriteria;
+import com.ousl.examinations.model.User;
 import com.ousl.examinations.payload.FinalExamCriteriaDTO;
 import com.ousl.examinations.payload.GradeCriteriaDTO;
 import com.ousl.examinations.payload.SaveCriteriaBindingDTO;
 import com.ousl.examinations.repository.FinalExamCriteriaRepository;
 import com.ousl.examinations.repository.ProgramRepository;
 import com.ousl.examinations.repository.ScExamProgMarksCriteriaRepository;
+import com.ousl.examinations.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,6 +35,9 @@ public class ExamCriteriaService {
 
     @Autowired
     private ScExamProgMarksCriteriaRepository scExamProgMarksCriteriaRepository;
+    
+    @Autowired
+    private UserRepository userRepository;
 
     public List<Program> getAllPrograms() {
         return programRepository.findAll();
@@ -72,9 +80,17 @@ public class ExamCriteriaService {
         Long programId = dto.getProgramId();
         Program program = programRepository.findById(programId).orElseThrow(() -> new RuntimeException("Program not found"));
 
+        // Get current user from security context
+        User currentUser = getCurrentUser();
+        
         List<ScExamProgMarksCriteria> existingBindings = scExamProgMarksCriteriaRepository.findByProgramId(programId);
-        Map<String, ScExamProgMarksCriteria> existingBindingsMap = existingBindings.stream()
-                .collect(Collectors.toMap(b -> b.getFinalExamCriteria().getGrade(), b -> b));
+        Map<String, ScExamProgMarksCriteria> existingBindingsMap = new HashMap<>();
+        
+        // Manually populate the map to handle potential duplicate grades
+        for (ScExamProgMarksCriteria binding : existingBindings) {
+            String grade = binding.getFinalExamCriteria().getGrade();
+            existingBindingsMap.put(grade, binding);
+        }
 
         for (Map.Entry<String, Long> entry : dto.getBindings().entrySet()) {
             String grade = entry.getKey();
@@ -85,13 +101,23 @@ public class ExamCriteriaService {
             if (binding == null) {
                 binding = new ScExamProgMarksCriteria();
                 binding.setProgram(program);
+                binding.setUser(currentUser);
+                binding.setCreatedAt(LocalDateTime.now());
             }
             binding.setFinalExamCriteria(criteria);
-            binding.setMarks(criteria.getMinMarks());
             scExamProgMarksCriteriaRepository.save(binding);
         }
     }
 
+    private User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            String username = authentication.getName();
+            return userRepository.findByUsername(username);
+        }
+        return null;
+    }
+    
     private FinalExamCriteriaDTO convertToDto(FinalExamCriteria criteria) {
         FinalExamCriteriaDTO dto = new FinalExamCriteriaDTO();
         dto.setId(criteria.getId());

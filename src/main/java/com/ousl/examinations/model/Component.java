@@ -1,6 +1,7 @@
 package com.ousl.examinations.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "component")
@@ -12,6 +13,13 @@ public class Component {
 
     @Column(name = "component_name", nullable = false, unique = true)
     private String componentName;
+    
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+    
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     // Getters and Setters
 
@@ -29,5 +37,21 @@ public class Component {
 
     public void setComponentName(String componentName) {
         this.componentName = componentName;
+    }
+    
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
