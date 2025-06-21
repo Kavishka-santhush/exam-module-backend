@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface MarksCriteriaRepository extends JpaRepository<MarksCriteria, Long> {
 
-    List<MarksCriteria> findByProgramId(Long programId);
+    List<MarksCriteria> findByComponentId(Long componentId);
 
 }

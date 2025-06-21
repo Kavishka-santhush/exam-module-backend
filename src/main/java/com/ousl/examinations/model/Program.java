@@ -10,7 +10,7 @@ public class Program extends Auditable<String> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "program_name", nullable = false, length = 100)
+    @Column(name = "program_name", nullable = true, length = 100)
     private String programName;
 
     @Column(name = "program_code", nullable = false, length = 20, unique = true)

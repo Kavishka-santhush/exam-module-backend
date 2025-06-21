@@ -11,7 +11,7 @@ public class Component {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "component_name", nullable = false, unique = true)
+    @Column(name = "component_name", nullable = false)
     private String componentName;
     
     @ManyToOne

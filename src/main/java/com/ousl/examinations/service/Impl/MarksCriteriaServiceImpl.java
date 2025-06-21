@@ -4,10 +4,12 @@ import com.ousl.examinations.dto.MarksCriteriaDTO;
 import com.ousl.examinations.model.Component;
 import com.ousl.examinations.model.MarksCriteria;
 import com.ousl.examinations.model.Program;
+import com.ousl.examinations.model.ProgComponent;
 import com.ousl.examinations.model.User;
 import com.ousl.examinations.repository.ComponentRepository;
 import com.ousl.examinations.repository.MarksCriteriaRepository;
 import com.ousl.examinations.repository.ProgramRepository;
+import com.ousl.examinations.repository.ProgComponentRepository;
 import com.ousl.examinations.repository.UserRepository;
 import com.ousl.examinations.service.MarksCriteriaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,9 @@ public class MarksCriteriaServiceImpl implements MarksCriteriaService {
 
     @Autowired
     private ProgramRepository programRepository;
+
+    @Autowired
+    private ProgComponentRepository progComponentRepository;
     
     @Autowired
     private UserRepository userRepository;
@@ -41,7 +46,12 @@ public class MarksCriteriaServiceImpl implements MarksCriteriaService {
 
     @Override
     public List<MarksCriteriaDTO> getMarksCriteriaByProgram(Long programId) {
-        return marksCriteriaRepository.findByProgramId(programId).stream().map(this::convertToDTO).collect(Collectors.toList());
+        // Fetch mapping rows for this program
+        List<ProgComponent> mappings = progComponentRepository.findByProgramId(programId);
+        return mappings.stream()
+                .flatMap(mapping -> marksCriteriaRepository.findByComponentId(mapping.getComponent().getId()).stream()
+                        .map(mc -> convertToDTO(mc, programId)))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -57,17 +67,14 @@ public class MarksCriteriaServiceImpl implements MarksCriteriaService {
             Program program = programRepository.findById(dto.getProgramId())
                     .orElseThrow(() -> new RuntimeException("Program not found with id: " + dto.getProgramId()));
 
-            // Find component by name, or create a new one if it doesn't exist
-            Component component = componentRepository.findByComponentName(dto.getComponentName())
-                    .orElseGet(() -> {
-                        Component newComponent = new Component();
-                        newComponent.setComponentName(dto.getComponentName());
-                        newComponent.setUser(currentUser);
-                        newComponent.setCreatedAt(LocalDateTime.now());
-                        return componentRepository.save(newComponent);
-                    });
+            // Always create a fresh Component for this criteria (duplicates allowed across programs)
+            Component component = new Component();
+            component.setComponentName(dto.getComponentName());
+            component.setUser(currentUser);
+            component.setCreatedAt(LocalDateTime.now());
+            component = componentRepository.save(component);
 
-            criteria.setProgram(program);
+// program is stored via ProgComponent mapping - not in MarksCriteria
             criteria.setComponent(component);
             criteria.setMinMark(dto.getMinMark());
             criteria.setPercentage(dto.getPercentage());
@@ -78,7 +85,17 @@ public class MarksCriteriaServiceImpl implements MarksCriteriaService {
                 criteria.setCreatedAt(LocalDateTime.now());
             }
             
+            // save criteria first
             marksCriteriaRepository.save(criteria);
+
+            // ensure mapping exists
+            ProgComponent mapping = progComponentRepository.findByProgramIdAndComponentId(program.getId(), component.getId());
+            if (mapping == null) {
+                mapping = new ProgComponent();
+                mapping.setProgram(program);
+                mapping.setComponent(component);
+                progComponentRepository.save(mapping);
+            }
         }
     }
 
@@ -104,10 +121,10 @@ public class MarksCriteriaServiceImpl implements MarksCriteriaService {
         return null;
     }
 
-    private MarksCriteriaDTO convertToDTO(MarksCriteria marksCriteria) {
+    private MarksCriteriaDTO convertToDTO(MarksCriteria marksCriteria, Long programId) {
         MarksCriteriaDTO dto = new MarksCriteriaDTO();
         dto.setId(marksCriteria.getId());
-        dto.setProgramId(marksCriteria.getProgram().getId());
+        dto.setProgramId(programId);
         dto.setComponentName(marksCriteria.getComponent().getComponentName());
         dto.setMinMark(marksCriteria.getMinMark());
         dto.setPercentage(marksCriteria.getPercentage());

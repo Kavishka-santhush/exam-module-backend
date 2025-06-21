@@ -11,9 +11,6 @@ public class MarksCriteria {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "program_id", nullable = false)
-    private Program program;
 
     @ManyToOne
     @JoinColumn(name = "component_id", nullable = false)
@@ -40,14 +37,6 @@ public class MarksCriteria {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Program getProgram() {
-        return program;
-    }
-
-    public void setProgram(Program program) {
-        this.program = program;
     }
 
     public Component getComponent() {
